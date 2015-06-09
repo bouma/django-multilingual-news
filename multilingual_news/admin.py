@@ -1,4 +1,6 @@
 """Admin classes for the ``multilingual_news`` app."""
+from cms import __version__ as cms_version
+from distutils.version import StrictVersion
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
@@ -9,7 +11,12 @@ except ImportError:
         pass
     FrontendEditableAdmin = Object
 
-from cms.admin.placeholderadmin import PlaceholderAdmin
+if StrictVersion(cms_version) >= StrictVersion('3.1'):
+    from cms.admin.placeholderadmin import PlaceholderAdminMixin
+else:
+    from cms.admin.placeholderadmin import PlaceholderAdmin as \
+        PlaceholderAdminMixin
+
 from document_library.admin import AttachmentInline
 from hvad.admin import TranslatableAdmin
 from multilingual_tags.admin import TaggedItemInline
@@ -27,7 +34,7 @@ class CategoryAdmin(TranslatableAdmin):
 
 class NewsEntryAdmin(TranslatableAdmin,
                      FrontendEditableAdmin,
-                     PlaceholderAdmin):
+                     PlaceholderAdminMixin):
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
