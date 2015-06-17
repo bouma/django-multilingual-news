@@ -4,27 +4,30 @@ from distutils.version import StrictVersion
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-try:
-    from cms.admin.placeholderadmin import FrontendEditableAdmin
-except ImportError:
-    class Object(object):
-        pass
-    FrontendEditableAdmin = Object
-
 if StrictVersion(cms_version) >= StrictVersion('3.1'):
     from cms.admin.placeholderadmin import PlaceholderAdminMixin
+    from cms.admin.placeholderadmin import FrontendEditableAdminMixin
 else:
+    # loading pre-django-cms-3.1 mixin's
     from cms.admin.placeholderadmin import PlaceholderAdmin as \
         PlaceholderAdminMixin
+    try:
+        from cms.admin.placeholderadmin import FrontendEditableAdmin as \
+            FrontendEditableAdminMixin
+    except ImportError:
+        class Object(object):
+            pass
+        FrontendEditableAdminMixin = Object
 
 from document_library.admin import AttachmentInline
-from hvad.admin import TranslatableAdmin
+from hvad.admin import TranslatableModelAdminMixin
 from multilingual_tags.admin import TaggedItemInline
 
 from .models import Category, NewsEntry
 
 
-class CategoryAdmin(TranslatableAdmin):
+class CategoryAdmin(TranslatableModelAdminMixin,
+                    admin.ModelAdmin):
     list_display = ['get_title', 'hide_on_list', 'all_translations', ]
 
     def get_title(self, obj):
@@ -32,9 +35,10 @@ class CategoryAdmin(TranslatableAdmin):
     get_title.short_description = _('Title')
 
 
-class NewsEntryAdmin(TranslatableAdmin,
-                     FrontendEditableAdmin,
-                     PlaceholderAdminMixin):
+class NewsEntryAdmin(TranslatableModelAdminMixin,
+                     FrontendEditableAdminMixin,
+                     PlaceholderAdminMixin,
+                     admin.ModelAdmin):
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
