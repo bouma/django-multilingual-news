@@ -20,14 +20,13 @@ else:
         FrontendEditableAdminMixin = Object
 
 from document_library.admin import AttachmentInline
-from hvad.admin import TranslatableModelAdminMixin
+from hvad.admin import TranslatableAdmin
 from multilingual_tags.admin import TaggedItemInline
 
 from .models import Category, NewsEntry
 
 
-class CategoryAdmin(TranslatableModelAdminMixin,
-                    admin.ModelAdmin):
+class CategoryAdmin(TranslatableAdmin):
     list_display = ['get_title', 'hide_on_list', 'all_translations', ]
 
     def get_title(self, obj):
@@ -35,10 +34,9 @@ class CategoryAdmin(TranslatableModelAdminMixin,
     get_title.short_description = _('Title')
 
 
-class NewsEntryAdmin(TranslatableModelAdminMixin,
+class NewsEntryAdmin(TranslatableAdmin,
                      FrontendEditableAdminMixin,
-                     PlaceholderAdminMixin,
-                     admin.ModelAdmin):
+                     PlaceholderAdminMixin):
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
