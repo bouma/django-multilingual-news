@@ -8,6 +8,6 @@ from cms.apphook_pool import apphook_pool
 class MultilingualNewsApphook(CMSApp):
     name = _("Multilingual News Apphook")
     urls = ["multilingual_news.urls"]
-
+    app_name = "multilingual_news" 
 
 apphook_pool.register(MultilingualNewsApphook)
