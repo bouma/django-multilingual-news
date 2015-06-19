@@ -34,9 +34,10 @@ class CategoryAdmin(TranslatableAdmin):
     get_title.short_description = _('Title')
 
 
-class NewsEntryAdmin(TranslatableAdmin,
-                     FrontendEditableAdminMixin,
-                     PlaceholderAdminMixin):
+class NewsEntryAdmin(PlaceholderAdminMixin,
+                     TranslatableAdmin,
+                     FrontendEditableAdminMixin
+                     ):
     """Admin class for the ``NewsEntry`` model."""
     inlines = [AttachmentInline, TaggedItemInline]
     list_display = [
